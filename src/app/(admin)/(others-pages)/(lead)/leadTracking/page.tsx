@@ -1,7 +1,5 @@
-"use client"
-import React from 'react';
+import LeadTrackingBoard from "@/components/lead/LeadTracking";
 
-const LeadTrackingPage = () => {
-    
+export default function LeadTracking() {
+  return <LeadTrackingBoard/>
 }
-export default LeadTrackingPage;

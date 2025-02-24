@@ -39,3 +39,14 @@ export const signupSchema = Yup.object({
     //     .oneOf([Yup.ref("password"), null], "Passwords must match")
     //     .required("Confirm password is required"),
 });
+
+export const createActivitySchema = Yup.object().shape({
+    leadID: Yup.number()
+        .required("Lead is a required field"),
+    type: Yup.string()
+        .required("Activity type is a required field"),
+    status: Yup.string()
+        .required("Status is a required field"),
+    title: Yup.string()
+        .required("Title is a required field"),
+});

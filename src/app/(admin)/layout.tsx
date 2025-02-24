@@ -21,25 +21,19 @@ export default function AdminLayout({
       : "lg:ml-[90px]";
 
   return (
-    <html>
-      <head>
-        <link href="https://cdn.syncfusion.com/ej2/28.2.3/tailwind3.css" rel="stylesheet" />
-      </head>
-      <div className="min-h-screen xl:flex">
-        {/* Sidebar and Backdrop */}
-        <AppSidebar />
-        <Backdrop />
-        {/* Main Content Area */}
-        <div
-          className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
-        >
-          {/* Header */}
-          <AppHeader />
-          {/* Page Content */}
-          <div className="p-4 mx-auto max-w-screen-2xl md:p-6">{children}</div>
-        </div>
+    <div className="min-h-screen xl:flex">
+      {/* Sidebar and Backdrop */}
+      <AppSidebar />
+      <Backdrop />
+      {/* Main Content Area */}
+      <div
+        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
+      >
+        {/* Header */}
+        <AppHeader />
+        {/* Page Content */}
+        <div className="p-4 mx-auto max-w-screen-2xl md:p-6">{children}</div>
       </div>
-
-    </html>
+    </div>
   );
 }
