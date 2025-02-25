@@ -13,6 +13,10 @@ import Select from '../form/Select';
 import FormSelect from '../form/FormSelect';
 import FormTextArea from '../form/input/FormTextArea';
 import { createActivitySchema } from '@/utils/validations';
+import { NewActivity } from '@/utils/constants';
+import Popup from '../dialog/Popup';
+
+const initialValues = { leadID: "", type: "", status: "", title: "", description: "" };
 
 const CreateActivityDialog = ({
     isOpen,
@@ -20,8 +24,8 @@ const CreateActivityDialog = ({
 }: { isOpen: boolean, onClose: () => void }) => {
 
     const handleSubmit = async (
-        values: {},
-        { setSubmitting }: FormikHelpers<{}>
+        values: NewActivity,
+        { setSubmitting }: FormikHelpers<NewActivity>
     ) => {
         try {
             console.log(values);
@@ -32,16 +36,16 @@ const CreateActivityDialog = ({
 
     return (
         <>
-            <Dialog
-                open={isOpen}
+            <Popup
+                isOpen={isOpen}
                 onClose={onClose}
                 maxWidth="sm"
                 fullWidth={true}
+                title='Add Activity'
             >
-                <DialogTitle>Add Activity</DialogTitle>
                 <Formik
                     validationSchema={createActivitySchema}
-                    initialValues={{ leadID: "", type: "", status: "", title: "", description: "" }}
+                    initialValues={initialValues}
                     onSubmit={handleSubmit}
                 >
                     {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
@@ -50,7 +54,7 @@ const CreateActivityDialog = ({
                                 <div className="space-y-6">
                                     <div>
                                         <Label>
-                                            Lead <span className="text-error-500">*</span>{" "}
+                                            Lead <span className="text-error-500">*</span>
                                         </Label>
                                         <FormSelect
                                             options={[{ value: 1, label: "Alit Technologies" }]}
@@ -65,7 +69,7 @@ const CreateActivityDialog = ({
                                     </div>
                                     <div>
                                         <Label>
-                                            Activity Type <span className="text-error-500">*</span>{" "}
+                                            Activity Type <span className="text-error-500">*</span>
                                         </Label>
                                         <FormSelect
                                             options={[{ value: 1, label: "Alit Technologies" }]}
@@ -80,7 +84,7 @@ const CreateActivityDialog = ({
                                     </div>
                                     <div>
                                         <Label>
-                                            Status <span className="text-error-500">*</span>{" "}
+                                            Status <span className="text-error-500">*</span>
                                         </Label>
                                         <FormSelect
                                             options={[{ value: 1, label: "Alit Technologies" }]}
@@ -95,7 +99,7 @@ const CreateActivityDialog = ({
                                     </div>
                                     <div>
                                         <Label>
-                                            Title <span className="text-error-500">*</span>{" "}
+                                            Title <span className="text-error-500">*</span>
                                         </Label>
                                         <FormInput
                                             type="text"
@@ -105,10 +109,9 @@ const CreateActivityDialog = ({
                                             error={errors.title && touched.title ? true : false}
                                         />
                                     </div>
-
                                     <div>
                                         <Label>
-                                            Description <span className="text-error-500">*</span>{" "}
+                                            Description
                                         </Label>
                                         <FormTextArea
                                             handleChange={handleChange}
@@ -122,8 +125,8 @@ const CreateActivityDialog = ({
                                 </div>
                             </DialogContent>
                             <DialogActions>
-                                <Button size="sm" variant="outline" type='button'>
-                                    Reset
+                                <Button size="sm" variant="outline" type='button' onClick={onClose}>
+                                    Cancel
                                 </Button>
                                 <Button size="md" variant="primary" type='submit'>
                                     Submit
@@ -132,7 +135,7 @@ const CreateActivityDialog = ({
                         </FormikForm>
                     )}
                 </Formik>
-            </Dialog>
+            </Popup>
         </>
     );
 

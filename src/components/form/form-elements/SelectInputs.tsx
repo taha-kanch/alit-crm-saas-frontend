@@ -24,6 +24,11 @@ export default function SelectInputs() {
     { value: "3", text: "Option 3", selected: false },
     { value: "4", text: "Option 4", selected: false },
     { value: "5", text: "Option 5", selected: false },
+    { value: "6", text: "Option 6", selected: false },
+    { value: "7", text: "Option 7", selected: false },
+    { value: "8", text: "Option 8", selected: false },
+    { value: "9", text: "Option 9", selected: false },
+    { value: "10", text: "Option 10", selected: false },
   ];
 
   return (

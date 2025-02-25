@@ -32,7 +32,7 @@ const navItems: NavItem[] = [
     name: "Lead",
     subItems: [
       { name: "Lead Tracking", path: "/leadTracking" },
-      { name: "Activities", path: "/activities" },
+      { name: "Activities", path: "/activityList" },
     ],
   },
   {

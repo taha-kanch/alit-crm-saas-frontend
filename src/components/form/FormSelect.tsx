@@ -12,7 +12,7 @@ interface SelectProps {
     handleChange: any;
     handleBlur: any;
     name: string;
-    value: string;
+    value: string | number;
     className?: string;
     error: boolean;
 }
