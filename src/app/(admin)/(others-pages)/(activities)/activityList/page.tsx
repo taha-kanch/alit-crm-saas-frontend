@@ -1,7 +1,8 @@
 "use client";
 import React from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
+import Button from '@/components/ui/button/Button';
+import CreateActivityDialog from '@/components/activities/CreateActivityDialog';
 
 const rows = [
     { id: 1, lead: "Burhanuddin - Alit Tech Pvt Ltd", type: "Meeting", from: "18-Feb-2025 13:22:26", to: "18-Feb-2025 14:22:30", title: "Appointment Meet", reminder: "false", status: "Completed" },
@@ -33,6 +34,7 @@ const DataGridTable = () => {
         page: 0,
         pageSize: 10,
     });
+    const [showActivityDialog, setShowActivityDialog] = React.useState(false);
 
     const columns: GridColDef[] = [
         {
@@ -118,14 +120,21 @@ const DataGridTable = () => {
         },
     ];
 
+    const openActivityDialog = () => {
+        setShowActivityDialog(true);
+    }
+    const onCloseActivityDialog = () => {
+        setShowActivityDialog(false);
+    }
+
     return (
         <div>
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90"            >
                     Activities
                 </h2>
-                <Button size="sm" variant="primary" type='button'>
-                    Add Lead
+                <Button size="sm" variant="primary" type='button' onClick={openActivityDialog}>
+                    Add New Lead
                 </Button>
             </div>
             <div className="space-y-6">
@@ -193,6 +202,12 @@ const DataGridTable = () => {
                     </div>
                 </div>
             </div>
+            {showActivityDialog && (
+                <CreateActivityDialog
+                    isOpen={showActivityDialog}
+                    onClose={onCloseActivityDialog}
+                />
+            )}
         </div>
     );
 };
