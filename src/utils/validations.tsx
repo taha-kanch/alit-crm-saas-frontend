@@ -51,7 +51,7 @@ export const createActivitySchema = Yup.object().shape({
         .required("Title is required"),
 });
 
-export const createNewLeadSchema = Yup.object().shape({
+export const leadSchema = Yup.object().shape({
     firstName: Yup.string()
         .required("First Name is required"),
     lastName: Yup.string()
@@ -75,11 +75,11 @@ export const createNewLeadSchema = Yup.object().shape({
         .required("Postal Code is required"),
     status: Yup.string()
         .required("Status is required"),
-    companyName: Yup.number()
+    companyName: Yup.string()
         .required("Company Name is required"),
     numberOfEmployees: Yup.number()
         .required("Number of Employee is required"),
-    industryType: Yup.number()
+    industryType: Yup.string()
         .required("Industry Type is required"),
     leadOwner: Yup.number()
         .required("Lead Owner is required"),
@@ -88,4 +88,41 @@ export const createNewLeadSchema = Yup.object().shape({
 export const updateLeadStatusSchema = Yup.object().shape({
     status: Yup.string()
         .required("Status is required"),
+});
+
+export const userProfileScheme = Yup.object().shape({
+    firstName: Yup.string()
+        .required("First Name is required"),
+    lastName: Yup.string()
+        .required("Last Name is required"),
+    email: Yup.string()
+        .required("Email is required")
+        .email("Invalid email format"),
+    phoneNumber: Yup.string()
+        .required("Mobile Number is required"),
+    instagram: Yup.string()
+        .matches(/^[a-zA-Z0-9._]{1,30}$/, 'Invalid Instagram ID')
+        .nullable(),
+    facebook: Yup.string()
+        .matches(/^[a-zA-Z0-9.]{5,50}$/, 'Invalid Facebook ID')
+        .nullable(),
+    linkedIn: Yup.string()
+        .matches(/^[a-zA-Z0-9-]{3,100}$/, 'Invalid LinkedIn ID')
+        .nullable(),
+    xcom: Yup.string()
+        .matches(/^[a-zA-Z0-9_]{1,15}$/, 'Invalid X (Twitter) ID')
+        .nullable(),
+});
+
+export const userAddressScheme = Yup.object().shape({
+    address: Yup.string()
+        .required("Address is required"),
+    city: Yup.string()
+        .required("City is required"),
+    state: Yup.string()
+        .required("State is required"),
+    country: Yup.string()
+        .required("Country is required"),
+    postalCode: Yup.number()
+        .required("Postāl Code is required"),
 });

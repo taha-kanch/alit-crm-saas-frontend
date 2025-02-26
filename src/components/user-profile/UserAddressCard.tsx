@@ -5,14 +5,30 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { UserProfileValues } from "@/utils/constants";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/hooks/useAppSelector";
+import { updateUserProfileDetailApiCall } from "./Action";
+import { Formik, FormikHelpers, Form as FormikForm } from "formik";
+import FormInput from "../form/input/FormInput";
+import { userAddressScheme } from "@/utils/validations";
+import FormTextArea from "../form/input/FormTextArea";
 
 export default function UserAddressCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+
+  const dispatch = useDispatch();
+  const { userProfileDetail }: { userProfileDetail: UserProfileValues } = useAppSelector((state) => state.userProfileDetail);
+
+  const handleSubmit = async (
+    values: UserProfileValues,
+    { setSubmitting }: FormikHelpers<UserProfileValues>
+  ) => {
+    updateUserProfileDetailApiCall(values, setSubmitting, dispatch, () => {
+      closeModal();
+    });
   };
+
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -28,16 +44,25 @@ export default function UserAddressCard() {
                   Country
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  United States
+                  {userProfileDetail.country || '-'}
                 </p>
               </div>
 
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  City/State
+                  State
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Phoenix, Arizona, United States.
+                  {userProfileDetail.state || '-'}
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  City
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  {userProfileDetail.country || '-'}
                 </p>
               </div>
 
@@ -46,16 +71,7 @@ export default function UserAddressCard() {
                   Postal Code
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  ERT 2489
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  TAX ID
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  AS4568384
+                  {userProfileDetail.postalCode || '-'}
                 </p>
               </div>
             </div>
@@ -94,39 +110,90 @@ export default function UserAddressCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
-            <div className="px-2 overflow-y-auto custom-scrollbar">
-              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                <div>
-                  <Label>Country</Label>
-                  <Input type="text" defaultValue="United States" />
+
+          <Formik
+            validationSchema={userAddressScheme}
+            initialValues={{
+              ...userProfileDetail,
+              address: userProfileDetail.address || '',
+              city: userProfileDetail.city || '',
+              state: userProfileDetail.state || '',
+              country: userProfileDetail.country || '',
+              postalCode: userProfileDetail.postalCode || undefined,
+            }}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched, isSubmitting, values, handleChange, handleBlur }) => (
+              <FormikForm>
+
+                <div className="px-2 overflow-y-auto custom-scrollbar">
+                  <div className="grid grid-cols-1 gap-y-5">
+                    <div>
+                      <Label>Address <span className="text-error-500">*</span></Label>
+                      <FormTextArea
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        name="address"
+                        rows={2}
+                        value={values.address}
+                        error={errors.address && touched.address ? true : false}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                    <div>
+                      <Label>Country</Label>
+                      <FormInput
+                        placeholder="Enter Country"
+                        type="text"
+                        name="country"
+                        error={errors.country && touched.country ? true : false}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>State</Label>
+                      <FormInput
+                        placeholder="Enter State"
+                        type="text"
+                        name="state"
+                        error={errors.state && touched.state ? true : false}
+                      />
+                    </div>
+                    <div>
+                      <Label>City</Label>
+                      <FormInput
+                        placeholder="Enter City"
+                        type="text"
+                        name="city"
+                        error={errors.city && touched.city ? true : false}
+                      />
+                    </div>
+                    <div>
+                      <Label>Postal Code</Label>
+                      <FormInput
+                        placeholder="Enter Postal Code"
+                        type="text"
+                        name="postalCode"
+                        error={errors.postalCode && touched.postalCode ? true : false}
+                      />
+                    </div>
+
+
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+                  <Button size="sm" variant="outline" onClick={closeModal} type="button">
+                    Close
+                  </Button>
+                  <Button size="sm" type="submit">
+                    Save Changes
+                  </Button>
                 </div>
 
-                <div>
-                  <Label>City/State</Label>
-                  <Input type="text" defaultValue="Arizona, United States." />
-                </div>
-
-                <div>
-                  <Label>Postal Code</Label>
-                  <Input type="text" defaultValue="ERT 2489" />
-                </div>
-
-                <div>
-                  <Label>TAX ID</Label>
-                  <Input type="text" defaultValue="AS4568384" />
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
-              </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
-              </Button>
-            </div>
-          </form>
+              </FormikForm>
+            )}
+          </Formik>
         </div>
       </Modal>
     </>

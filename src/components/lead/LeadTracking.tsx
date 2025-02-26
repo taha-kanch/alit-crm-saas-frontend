@@ -5,66 +5,62 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import React from "react";
-import CreateActivityDialog from "../activities/CreateActivityDialog";
+import ActivityFormPopup from "../activities/ActivityFormPopup";
 import Button from "../ui/button/Button";
 import LeadFormPopup from "./LeadFormPopup";
 import LeadStatusPopup from "./LeadStatusPopup";
+import { useModal } from "@/hooks/useModal";
+import { fetchAllLeadApiCall } from "./Action";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "@/hooks/useAppSelector";
+import { eCRUDStatus } from "@/utils/constants";
 
-const columns = {
-    new_leads: { title: "New Leads", count: 1, items: [{ id: 1, name: "Alit Technologies Pvt Ltd", person: "Burhanuddin Saify", role: "COO" }] },
-    follow_ups: { title: "Follow ups", count: 0, items: [] },
-    under_review: { title: "Under Review", count: 0, items: [] },
-    demo: { title: "Demo", count: 0, items: [] },
-    negotiation: { title: "Negotiation", count: 0, items: [] },
-    won: { title: "Won", count: 0, items: [] },
-    lost: { title: "Lost", count: 0, items: [] },
-    unqualified: { title: "Unqualified", count: 0, items: [] }
+const COLUMNS = {
+    NEW: { title: "New Leads", count: 1, items: [{ id: 1, name: "Alit Technologies Pvt Ltd", person: "Burhanuddin Saify", role: "COO" }] },
+    FOLLOW_UP: { title: "Follow ups", count: 0, items: [] },
+    UNDER_REVIEW: { title: "Under Review", count: 0, items: [] },
+    DEMO: { title: "Demo", count: 0, items: [] },
+    NEGOTIATION: { title: "Negotiation", count: 0, items: [] },
+    WON: { title: "Won", count: 0, items: [] },
+    LOST: { title: "Lost", count: 0, items: [] },
+    UNQUALIFIED: { title: "Unqualified", count: 0, items: [] }
 };
 
 export default function LeadTrackingBoard() {
 
-    const [showActivityDialog, setShowActivityDialog] = React.useState(false);
-    const [showLeadDialog, setShowLeadDialog] = React.useState(false);
-    const [leadID, setLeadID] = React.useState<number | null>(null);
-    const [showLeadStatusDialog, setShowLeadStatusDialog] = React.useState(false);
+    const { isOpen: isLeadOpen, openModal: openLeadModal, closeModal: closeLeadModal } = useModal();
+    const { isOpen: isActivityOpen, openModal: openActivityModal, closeModal: closeActivityModal } = useModal();
+    const { isOpen: isLeadStatusOpen, openModal: openLeadStatusModal, closeModal: closeLeadStatusModal } = useModal();
+    
+    const dispatch = useDispatch();
+    const { leads } = useAppSelector((state) => state.leads);
 
-    const openActivityDialog = () => {
-        setShowActivityDialog(true);
-    }
-    const onCloseActivityDialog = () => {
-        setShowActivityDialog(false);
-    }
+    const [columns, setColumns] = React.useState({});
+    const [leadData, setLeadData] = React.useState({});
+    const [statusLead, setStatusLead] = React.useState({
+        eStatus: eCRUDStatus.None,
+    });
 
-    const openLeadDialog = () => {
-        setShowLeadDialog(true);
-    }
-    const onCloseLeadDialog = () => {
-        setShowLeadDialog(false);
-        setLeadID(null);
-    }
+    React.useEffect(() => {
+        fetchAllLeadApiCall(dispatch);
+    }, [statusLead]);
 
-    const openLeadStatusDialog = () => {
-        setShowLeadStatusDialog(true);
-    }
-    const onCloseLeadStatusDialog = () => {
-        setShowLeadStatusDialog(false);
-    }
-
-    const handleEditLead = (leadID: number) => {
-        setLeadID(leadID);
-        openLeadDialog();
-    }
-
-    const handleUpdateLeadStatus = (leadID: number) => {
-        setLeadID(leadID);
-        openLeadStatusDialog();
-    }
+    React.useEffect(() => {
+        if (leads.length > 0) {
+            Object.keys(COLUMNS).forEach(status => {
+                const leadsByStatus = leads.filter(lead => lead.status === status);
+                COLUMNS[status].items = leadsByStatus;
+                COLUMNS[status].count = leadsByStatus.length;
+            });
+            setColumns(COLUMNS);
+        }
+    }, [leads]);
 
     return (
         <div className="p-4">
 
             <div className="flex justify-end mb-2">
-                <Button size="sm" variant="primary" type='button' onClick={openLeadDialog}>
+                <Button size="sm" variant="primary" type='button' onClick={openLeadModal}>
                     Add Lead
                 </Button>
             </div>
@@ -76,45 +72,55 @@ export default function LeadTrackingBoard() {
                             <div key={item.id} className="bg-white p-4 rounded-lg h-min-[100px] shadow-md mb-2 ">
                                 <div>
                                     <div className="flex justify-between">
-                                        <h3 className="font-semibold">{item.name}</h3>
+                                        <h3 className="font-semibold">{item.companyName}</h3>
                                         <div className="flex justify-end gap-1">
-                                            <IconButton size="small" color="primary" onClick={openActivityDialog}>
+                                            <IconButton size="small" color="primary" onClick={openActivityModal}>
                                                 <AddIcon fontSize="small" />
                                             </IconButton>
-                                            <IconButton size="small" color="secondary" onClick={() => handleEditLead(item.id)}>
+                                            <IconButton size="small" color="secondary" onClick={() => {
+                                                openLeadModal();
+                                                setLeadData(item);
+                                            }}>
                                                 <EditIcon fontSize="small" />
                                             </IconButton>
-                                            <IconButton size="small" color="default" onClick={() => handleUpdateLeadStatus(item.id)}>
+                                            <IconButton size="small" color="default" onClick={() => {
+                                                openLeadStatusModal();
+                                                setLeadData(item);
+                                            }}>
                                                 <ArrowForwardIcon fontSize="small" />
                                             </IconButton>
                                         </div>
                                     </div>
-                                    <p className="text-sm">{item.person}</p>
-                                    <p className="text-sm text-gray-600">{item.role}</p>
+                                    <p className="text-sm">{item.fullName}</p>
+                                    <p className="text-sm text-gray-600">{item.jobTitle}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 ))}
             </div>
-            {showActivityDialog && (
-                <CreateActivityDialog
-                    isOpen={showActivityDialog}
-                    onClose={onCloseActivityDialog}
+            {isActivityOpen && (
+                <ActivityFormPopup
+                    isOpen={isActivityOpen}
+                    onClose={closeActivityModal}
                 />
             )}
-            {showLeadDialog && (
+            {isLeadOpen && (
                 <LeadFormPopup
-                    isOpen={showLeadDialog}
-                    onClose={onCloseLeadDialog}
-                    leadID={leadID}
+                    isOpen={isLeadOpen}
+                    onClose={() => {
+                        setLeadData({});
+                        closeLeadModal();
+                    }}
+                    leadData={leadData}
+                    setStatusLead={setStatusLead}
                 />
             )}
-            {showLeadStatusDialog && (
+            {isLeadStatusOpen && (
                 <LeadStatusPopup
-                    isOpen={showLeadStatusDialog}
-                    onClose={onCloseLeadStatusDialog}
-                    leadID={leadID}
+                    isOpen={isLeadStatusOpen}
+                    onClose={closeLeadStatusModal}
+                    leadData={leadData}
                 />
             )}
         </div>

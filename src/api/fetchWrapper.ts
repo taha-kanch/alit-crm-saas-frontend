@@ -1,8 +1,11 @@
 import { ApiResponse } from "./types/apiTypes";
 
 export class FetchWrapper {
+
+  private static API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
   private static getAuthToken(): string | null {
-    return localStorage.getItem("authToken");
+    return localStorage.getItem("accessToken");
   }
 
   private static authHeader(): HeadersInit {
@@ -16,19 +19,29 @@ export class FetchWrapper {
     response: Response,
     noResponseData = false
   ): Promise<ApiResponse> {
+    if(!response.ok) {
+      return {
+        isOk: false,
+        data: await response.json(),
+        statusCode: response.status,
+      };
+    } else {
     return {
       isOk: true,
       data: await response.json(),
       statusCode: response.status,
     };
   }
+  }
 
-  static async get(url: string): Promise<ApiResponse> {
-    const response = await fetch(url, { method: "GET", headers: this.authHeader() });
+  static async get(endpoint: string): Promise<ApiResponse> {
+    const url = `${this.API_BASE_URL}/${endpoint}`;
+    const response = await fetch(url, { method: "GET", headers: this.authHeader()});
     return this.handleResponse(response);
   }
 
-  static async post(url: string, body: any): Promise<ApiResponse> {
+  static async post(endpoint: string, body: any): Promise<ApiResponse> {
+    const url = `${this.API_BASE_URL}/${endpoint}`;
     const response = await fetch(url, {
       method: "POST",
       headers: this.authHeader(),
@@ -37,7 +50,8 @@ export class FetchWrapper {
     return this.handleResponse(response);
   }
 
-  static async put(url: string, body: any): Promise<ApiResponse> {
+  static async put(endpoint: string, body: any): Promise<ApiResponse> {
+    const url = `${this.API_BASE_URL}/${endpoint}`;
     const response = await fetch(url, {
       method: "PUT",
       headers: this.authHeader(),
@@ -46,7 +60,8 @@ export class FetchWrapper {
     return this.handleResponse(response);
   }
 
-  static async delete(url: string): Promise<ApiResponse> {
+  static async delete(endpoint: string): Promise<ApiResponse> {
+    const url = `${this.API_BASE_URL}/${endpoint}`;
     const response = await fetch(url, { method: "DELETE", headers: this.authHeader() });
     return this.handleResponse(response);
   }

@@ -2,7 +2,7 @@ import { ErrorMessage } from "formik";
 import React, { useState } from "react";
 
 interface Option {
-    value: number;
+    value: number | string;
     label: string;
 }
 

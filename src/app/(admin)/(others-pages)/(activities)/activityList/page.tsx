@@ -2,7 +2,7 @@
 import React from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import Button from '@/components/ui/button/Button';
-import CreateActivityDialog from '@/components/activities/CreateActivityDialog';
+import ActivityFormPopup from '@/components/activities/ActivityFormPopup';
 
 const rows = [
     { id: 1, lead: "Burhanuddin - Alit Tech Pvt Ltd", type: "Meeting", from: "18-Feb-2025 13:22:26", to: "18-Feb-2025 14:22:30", title: "Appointment Meet", reminder: "false", status: "Completed" },
@@ -203,7 +203,7 @@ const DataGridTable = () => {
                 </div>
             </div>
             {showActivityDialog && (
-                <CreateActivityDialog
+                <ActivityFormPopup
                     isOpen={showActivityDialog}
                     onClose={onCloseActivityDialog}
                 />

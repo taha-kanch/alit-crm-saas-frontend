@@ -5,14 +5,29 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { UserProfileValues } from "@/utils/constants";
+import { useAppSelector } from "@/hooks/useAppSelector";
+import { useDispatch } from "react-redux";
+import FormInput from "../form/input/FormInput";
+import { Formik, Form as FormikForm, FormikHelpers } from "formik";
+import { userProfileScheme } from "@/utils/validations";
+import { updateUserProfileDetailApiCall } from "./Action";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+
+  const dispatch = useDispatch();
+  const { userProfileDetail }: { userProfileDetail: UserProfileValues } = useAppSelector((state) => state.userProfileDetail);
+
+  const handleSubmit = async (
+    values: UserProfileValues,
+    { setSubmitting }: FormikHelpers<UserProfileValues>
+  ) => {
+    updateUserProfileDetailApiCall(values, setSubmitting, dispatch, () => {
+      closeModal();
+    });
   };
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -27,7 +42,7 @@ export default function UserInfoCard() {
                 First Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Musharof
+                {userProfileDetail.firstName}
               </p>
             </div>
 
@@ -36,7 +51,7 @@ export default function UserInfoCard() {
                 Last Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Chowdhury
+                {userProfileDetail.lastName}
               </p>
             </div>
 
@@ -45,7 +60,7 @@ export default function UserInfoCard() {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                randomuser@pimjo.com
+                {userProfileDetail.email}
               </p>
             </div>
 
@@ -54,16 +69,7 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Team Manager
+                {userProfileDetail.phoneNumber}
               </p>
             </div>
           </div>
@@ -102,86 +108,132 @@ export default function UserInfoCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
-            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+          <Formik
+            validationSchema={userProfileScheme}
+            initialValues={{
+              ...userProfileDetail,
+              id: userProfileDetail.id || 0,
+              firstName: userProfileDetail.firstName || '',
+              lastName: userProfileDetail.lastName || '',
+              fullName: userProfileDetail.fullName || '',
+              email: userProfileDetail.email || '',
+              phoneNumber: userProfileDetail.phoneNumber || '',
+              facebook: userProfileDetail.facebook || '',
+              instagram: userProfileDetail.instagram || '',
+              xcom: userProfileDetail.xcom || '',
+              linkedIn: userProfileDetail.linkedIn || ''
+            }}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched, isSubmitting, values }) => (
+              <FormikForm>
+                <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
                   <div>
-                    <Label>Facebook</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://www.facebook.com/PimjoHQ"
-                    />
+                    <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                      Social Links
+                    </h5>
+
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                      <div>
+                        <Label>Facebook</Label>
+                        <FormInput
+                          placeholder="www.facebook.com"
+                          type="text"
+                          name="facebook"
+                          error={errors.facebook && touched.facebook ? true : false}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>X.com</Label>
+                        <FormInput
+                          placeholder="www.x.com"
+                          type="text"
+                          name="xcom"
+                          error={errors.xcom && touched.xcom ? true : false}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Linkedin</Label>
+                        <FormInput
+                          placeholder="www.linkedIn.com"
+                          type="text"
+                          name="linkedIn"
+                          error={errors.linkedIn && touched.linkedIn ? true : false}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Instagram</Label>
+                        <FormInput
+                          placeholder="www.instagram.com"
+                          type="text"
+                          name="instagram"
+                          error={errors.instagram && touched.instagram ? true : false}
+                        />
+                      </div>
+                    </div>
                   </div>
+                  <div className="mt-7">
+                    <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                      Personal Information
+                    </h5>
 
-                  <div>
-                    <Label>X.com</Label>
-                    <Input type="text" defaultValue="https://x.com/PimjoHQ" />
-                  </div>
-
-                  <div>
-                    <Label>Linkedin</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://www.linkedin.com/company/pimjo"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Instagram</Label>
-                    <Input
-                      type="text"
-                      defaultValue="https://instagram.com/PimjoHQ"
-                    />
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                      <div className="col-span-2 lg:col-span-1">
+                        <Label>First Name</Label>
+                        <FormInput
+                          placeholder="Enter First Name"
+                          type="text"
+                          name="firstName"
+                          error={errors.firstName && touched.firstName ? true : false}
+                        />
+                      </div>
+                      <div className="col-span-2 lg:col-span-1">
+                        <Label>Last Name</Label>
+                        <FormInput
+                          placeholder="Enter Last Name"
+                          type="text"
+                          name="lastName"
+                          error={errors.lastName && touched.lastName ? true : false}
+                        />
+                      </div>
+                      <div className="col-span-2 lg:col-span-1">
+                        <Label>Email Address</Label>
+                        <FormInput
+                          placeholder="info@gmail.com"
+                          type="text"
+                          name="email"
+                          error={errors.email && touched.email ? true : false}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="col-span-2 lg:col-span-1">
+                        <Label>Mobile</Label>
+                        <FormInput
+                          placeholder="Enter Mobile Number"
+                          type="text"
+                          name="phoneNumber"
+                          error={errors.phoneNumber && touched.phoneNumber ? true : false}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-7">
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Personal Information
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" defaultValue="Musharof" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" defaultValue="Chowdhury" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" defaultValue="randomuser@pimjo.com" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" defaultValue="+09 363 398 46" />
-                  </div>
-
-                  <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" defaultValue="Team Manager" />
-                  </div>
+                <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+                  <Button size="sm" variant="outline" onClick={closeModal} type="button">
+                    Close
+                  </Button>
+                  <Button size="sm" type="submit">
+                    Save Changes
+                  </Button>
                 </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
-              </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
-              </Button>
-            </div>
-          </form>
+
+              </FormikForm>
+            )}
+          </Formik>
         </div>
       </Modal>
     </div>

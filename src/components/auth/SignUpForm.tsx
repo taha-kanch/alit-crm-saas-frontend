@@ -1,7 +1,6 @@
 "use client";
 import { AuthService } from "@/api/Services/AuthService";
 import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import { SignupValues } from "@/utils/constants";
@@ -10,36 +9,22 @@ import { Formik, FormikHelpers, Form as FormikForm } from 'formik';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import FormInput from "../form/input/FormInput";
-
-const authService = new AuthService();
+import { signup } from "./Action";
+import { useDispatch } from "react-redux";
 
 export default function SignUpForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  // const router = useRouter();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (
     values: SignupValues,
     { setSubmitting }: FormikHelpers<SignupValues>
   ) => {
-    try {
-      const response = await authService.signup(values);
-      if (!response.isOk) {
-        toast(response.data.message, {
-          type: "error",
-          autoClose: 2000,
-        });
-      } else {
-        toast("Signup Succesfully", {
-          type: 'success'
-        });
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
+    signup(values, setSubmitting, router, dispatch);
   };
 
   return (

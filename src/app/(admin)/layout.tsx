@@ -1,12 +1,12 @@
 "use client";
-
 import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
+import ProtectedRoute from "@/utils/ProtectedRoute";
 import React from "react";
 
-export default function AdminLayout({
+function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -37,3 +37,5 @@ export default function AdminLayout({
     </div>
   );
 }
+
+export default ProtectedRoute(AdminLayout)

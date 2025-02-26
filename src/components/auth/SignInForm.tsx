@@ -8,43 +8,31 @@ import React, { useState } from "react";
 import { Formik, FormikHelpers, Form as FormikForm } from 'formik';
 import { LoginValues } from "@/utils/constants";
 import { loginSchema } from "@/utils/validations";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { AuthService } from "@/api/Services/AuthService";
 import FormInput from "../form/input/FormInput";
-
-const authService = new AuthService();
+import { login } from "./Action";
+import { useDispatch, useSelector } from "react-redux";
+import { useAppSelector } from "@/hooks/useAppSelector";
 
 export default function SignInForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { data: { token } } = useAppSelector((state) => state.auth);
+
+  React.useEffect(() => {
+    if(token) {
+      router.push('/');
+    }
+  },[]);
 
   const handleSubmit = async (
     values: LoginValues,
     { setSubmitting }: FormikHelpers<LoginValues>
   ) => {
-    try {
-      const response = await authService.login(values);
-      if (!response.isOk) {
-        toast(response.data.message, {
-          type: "error",
-          autoClose: 2000,
-        });
-      } else {
-        toast("Logged In Succesfully", {
-          type: 'success'
-        });
-        // if (response.data.user.subscriptionID) {
-        //   router.push("/");
-        // } else {
-        //   router.push("/subscription");
-        // }
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
+    login(values, setSubmitting, router, dispatch);
   };
 
   return (
