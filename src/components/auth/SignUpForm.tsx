@@ -29,15 +29,6 @@ export default function SignUpForm() {
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon />
-          Back to dashboard
-        </Link>
-      </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -117,7 +108,7 @@ export default function SignUpForm() {
                         />
                         <span
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                          className={`absolute z-30 -translate-y-1/2 cursor-pointer right-4 ${errors.password ? 'top-1/3' : 'top-1/2'}`}
                         >
                           {showPassword ? (
                             <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
@@ -128,7 +119,7 @@ export default function SignUpForm() {
                       </div>
                     </div>
                     {/* <!-- Checkbox --> */}
-                    <div className="flex items-center gap-3">
+                    {/* <div className="flex items-center gap-3">
                       <Checkbox
                         className="w-5 h-5"
                         checked={isChecked}
@@ -144,7 +135,7 @@ export default function SignUpForm() {
                           Privacy Policy
                         </span>
                       </p>
-                    </div>
+                    </div> */}
                     {/* <!-- Button --> */}
                     <div>
                       <button className="fle items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600" type="submit">

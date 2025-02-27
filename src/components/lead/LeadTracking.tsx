@@ -31,13 +31,14 @@ export default function LeadTrackingBoard() {
     const { isOpen: isLeadOpen, openModal: openLeadModal, closeModal: closeLeadModal } = useModal();
     const { isOpen: isActivityOpen, openModal: openActivityModal, closeModal: closeActivityModal } = useModal();
     const { isOpen: isLeadStatusOpen, openModal: openLeadStatusModal, closeModal: closeLeadStatusModal } = useModal();
-    
+
     const dispatch = useDispatch();
     const { leads } = useAppSelector((state) => state.leads);
 
     const [columns, setColumns] = React.useState({});
     const [leadData, setLeadData] = React.useState({});
     const [statusLead, setStatusLead] = React.useState({
+        primaryKey: 0,
         eStatus: eCRUDStatus.None,
     });
 
@@ -52,7 +53,7 @@ export default function LeadTrackingBoard() {
                 COLUMNS[status].items = leadsByStatus;
                 COLUMNS[status].count = leadsByStatus.length;
             });
-            setColumns(COLUMNS);
+            setColumns({ ...COLUMNS });
         }
     }, [leads]);
 
@@ -74,7 +75,10 @@ export default function LeadTrackingBoard() {
                                     <div className="flex justify-between">
                                         <h3 className="font-semibold">{item.companyName}</h3>
                                         <div className="flex justify-end gap-1">
-                                            <IconButton size="small" color="primary" onClick={openActivityModal}>
+                                            <IconButton size="small" color="primary" onClick={() => {
+                                                openActivityModal();
+                                                setLeadData(item);
+                                            }}>
                                                 <AddIcon fontSize="small" />
                                             </IconButton>
                                             <IconButton size="small" color="secondary" onClick={() => {
@@ -102,7 +106,12 @@ export default function LeadTrackingBoard() {
             {isActivityOpen && (
                 <ActivityFormPopup
                     isOpen={isActivityOpen}
-                    onClose={closeActivityModal}
+                    onClose={() => {
+                        setLeadData({});
+                        closeActivityModal();
+                    }}
+                    leadsDs={leads}
+                    lead={leadData}
                 />
             )}
             {isLeadOpen && (
@@ -119,8 +128,12 @@ export default function LeadTrackingBoard() {
             {isLeadStatusOpen && (
                 <LeadStatusPopup
                     isOpen={isLeadStatusOpen}
-                    onClose={closeLeadStatusModal}
+                    onClose={() => {
+                        setLeadData({});
+                        closeLeadStatusModal();
+                    }}
                     leadData={leadData}
+                    setStatusLead={setStatusLead}
                 />
             )}
         </div>

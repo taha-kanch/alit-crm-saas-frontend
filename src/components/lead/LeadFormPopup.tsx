@@ -5,12 +5,12 @@ import Label from '../form/Label';
 import FormInput from '../form/input/FormInput';
 import FormSelect from '../form/FormSelect';
 import FormTextArea from '../form/input/FormTextArea';
-import { eCRUDStatus, IndustryType, InterestedProduct, LeadStatus, LeadValues, NewLead } from '@/utils/constants';
+import { eCRUDStatus, IndustryType, InterestedProduct, LeadStatus, NewLead } from '@/utils/constants';
 import FormMultiSelect from '../form/FormMultiSelect';
 import React, { FC } from 'react';
 import { leadSchema } from '@/utils/validations';
 import Radio from '../form/input/Radio';
-import { addLeadApiCall, fetchLeadByIdApiCall, updateLeadApiCall } from './Action';
+import { addLeadApiCall, updateLeadApiCall } from './Action';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { Modal } from '../ui/modal';
@@ -39,13 +39,14 @@ const LeadFormPopup: FC<LeadFormProps> = ({ isOpen, onClose, leadData, setStatus
     ) => {
         try {
             if (leadData?.id) {
-                updateLeadApiCall(values, setSubmitting, dispatch, () => {
+                updateLeadApiCall(values, setSubmitting, dispatch, (lead) => {
+                    setStatusLead({ primaryKey: lead.id, eStatus: eCRUDStatus.Updated });
                     onClose();
                 });
             } else {
                 values.leadOwner = user.id;
-                addLeadApiCall(values, setSubmitting, dispatch, () => {
-                    setStatusLead(eCRUDStatus.Inserted);
+                addLeadApiCall(values, setSubmitting, dispatch, (lead) => {
+                    setStatusLead({ primaryKey: lead.id, eStatus: eCRUDStatus.Inserted });
                     onClose();
                 });
             }
@@ -66,7 +67,7 @@ const LeadFormPopup: FC<LeadFormProps> = ({ isOpen, onClose, leadData, setStatus
                     <Formik
                         validationSchema={leadSchema}
                         initialValues={{
-                            id: leadData.id || 0,
+                            id: leadData.id || undefined,
                             firstName: leadData.firstName || "",
                             lastName: leadData.lastName || "",
                             jobTitle: leadData.jobTitle || "",

@@ -53,7 +53,7 @@ export const fetchActivityByIdApiCall = async (activityID:number, dispatch: AppD
     }
 }
 
-export const addActivityApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: () => void) => {
+export const addActivityApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: (arg: any) => void) => {
     dispatch(
         loaderListener({
             loading: true,
@@ -68,7 +68,7 @@ export const addActivityApiCall = async (values: any, setSubmitting: FormikHelpe
             Utils.showAlert(2, response.data?.message || "Unable to add Activity");
         } else {
             setSubmitting(false);
-            cb();
+            cb(response.data);
         }
     } catch (error) {
         Utils.showAlert(2, "Something went wrong");

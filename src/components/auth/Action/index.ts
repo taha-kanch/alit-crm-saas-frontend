@@ -5,6 +5,7 @@ import { FormikHelpers } from "formik";
 import { signin } from "../Slice/authSlice";
 import Utils from "@/utils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { loaderListener, successSubscribeUserReducer } from "@/components/subscription/Slice/SubscribeUserSlice";
 
 const authService = new AuthService();
 
@@ -19,9 +20,20 @@ export const login = async (values: LoginValues, setSubmitting: FormikHelpers<Lo
         if (!response.isOk) {
             Utils.showAlert(2, response.data?.message || "Invalid Credentials");
         } else {
-            dispatch(signin({ data: response.data }));
-            localStorage.setItem('accessToken', response.data.token);
-            router.push("/");
+            if(response.data.user.subscriptionID) {
+                dispatch(signin({ data: response.data }));
+                localStorage.setItem('accessToken', response.data.token);
+                router.push("/");
+            } else {
+                dispatch(
+                    successSubscribeUserReducer({
+                        data: response.data,
+                        loading: false,
+                        openFromPage: 'signin',
+                    })
+                );
+                router.push("/subscription");
+            }
         }
     } catch (error) {
         Utils.showAlert(2, "Invalid Credentials")
@@ -37,15 +49,26 @@ export const signup = async (values: SignupValues, setSubmitting: FormikHelpers<
     };
     try {
         const response = await authService.signup(dataToSend);
-        console.log(response)
         if (!response.isOk) {
             Utils.showAlert(2, response.data?.message || "SignUp failed");
         } else {
-            Utils.showAlert(1, "Signup Succesfully");
+            dispatch(
+                successSubscribeUserReducer({
+                    data: response.data,
+                    loading: false,
+                    openFromPage: 'signup',
+                })
+            );
+            router.push("/subscription");
         }
     } catch (error) {
         Utils.showAlert(2, "SignUp failed");
         dispatch(signin({ data: {} }))
+        dispatch(
+            loaderListener({
+                loading: false,
+            })
+        );
     } finally {
         setSubmitting(false);
     }

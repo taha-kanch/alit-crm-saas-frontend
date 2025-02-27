@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import Popup from "../dialog/Popup";
 import { Formik, FormikHelpers, Form as FormikForm } from "formik";
-import { LeadStatus, UpdateLeadStatus } from "@/utils/constants";
+import { eCRUDStatus, LeadStatus, UpdateLeadStatus } from "@/utils/constants";
 import { DialogActions, DialogContent } from "@mui/material";
 import Button from "../ui/button/Button";
 import Label from "../form/Label";
@@ -15,13 +15,14 @@ interface LeadStatusProps {
     isOpen: boolean,
     onClose: () => void,
     leadData: any,
+    setStatusLead: any
 }
 
 const initialValues: UpdateLeadStatus = {
     status: "",
 }
 
-const LeadStatusPopup: FC<LeadStatusProps> = ({ isOpen, onClose, leadData }) => {
+const LeadStatusPopup: FC<LeadStatusProps> = ({ isOpen, onClose, leadData, setStatusLead }) => {
 
     const dispatch = useDispatch();
 
@@ -30,8 +31,8 @@ const LeadStatusPopup: FC<LeadStatusProps> = ({ isOpen, onClose, leadData }) => 
         { setSubmitting }: FormikHelpers<UpdateLeadStatus>
     ) => {
         try {
-            console.log(values);
-            updateLeadApiCall(values, setSubmitting, dispatch, () => {
+            updateLeadApiCall(values, setSubmitting, dispatch, (lead) => {
+                setStatusLead({ primaryKey: lead.id, eStatus: eCRUDStatus.Updated });
                 onClose();
             });
         } catch (error: any) {

@@ -10,6 +10,8 @@ import leadSlice from '@/components/lead/Slice/LeadSlice';
 import leadDetailSlice from '@/components/lead/Slice/LeadDetailSlice';
 import activitySlice from '@/components/activities/Slice/ActivitySlice';
 import activityDetailSlice from '@/components/activities/Slice/ActivityDetailSlice';
+import subscriptionSlice from '@/components/subscription/Slice/SubscriptionSlice';
+import subscribeUserSlice from '@/components/subscription/Slice/SubscribeUserSlice';
 
 const persistConfig = {
     debug: false,
@@ -18,7 +20,7 @@ const persistConfig = {
     storage,
     blacklist: [],
     // add reducer name to persist
-    whitelist: ['auth']
+    whitelist: ['auth', 'subscribeUser']
 }
 
 const rootReducer = combineReducers({
@@ -28,6 +30,8 @@ const rootReducer = combineReducers({
 "leadDetail": leadDetailSlice,
 "activities": activitySlice,
 "activityDetail": activityDetailSlice,
+"subscriptions": subscriptionSlice,
+"subscribeUser": subscribeUserSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

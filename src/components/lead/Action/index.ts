@@ -53,7 +53,7 @@ export const fetchLeadByIdApiCall = async (leadID:number, dispatch: AppDispatch)
     }
 }
 
-export const addLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: () => void) => {
+export const addLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: (arg:any) => void) => {
     dispatch(
         loaderListener({
             loading: true,
@@ -68,7 +68,8 @@ export const addLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{
             Utils.showAlert(2, response.data?.message || "Unable to add Lead");
         } else {
             setSubmitting(false);
-            cb();
+            console.log("Creating lead:",response.data);
+            cb(response.data);
         }
     } catch (error) {
         Utils.showAlert(2, "Something went wrong");
@@ -77,7 +78,7 @@ export const addLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{
     }
 }
 
-export const updateLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: () => void) => {
+export const updateLeadApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: (arg: any) => void) => {
     dispatch(
         loaderListener({
             loading: true,
@@ -98,7 +99,8 @@ export const updateLeadApiCall = async (values: any, setSubmitting: FormikHelper
                     loading: false,
                 })
             );
-            cb();
+            console.log("Updating lead:",response.data);
+            cb(response.data);
         }
     } catch (error) {
         Utils.showAlert(2, "Something went wrong");

@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
     name: "Lead",
     subItems: [
       { name: "Lead Tracking", path: "/leadTracking" },
-      { name: "Activities", path: "/activityList" },
+      { name: "Activities", path: "/activities" },
     ],
   },
   // {

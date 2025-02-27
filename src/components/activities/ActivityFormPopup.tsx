@@ -1,35 +1,57 @@
 "use client";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Button from '../ui/button/Button';
-import { Formik, Form as FormikForm, FormikHelpers } from 'formik';
-import { toast } from 'react-toastify';
+import { ErrorMessage, Formik, Form as FormikForm, FormikHelpers } from 'formik';
 import Label from '../form/Label';
 import FormInput from '../form/input/FormInput';
-import Select from '../form/Select';
 import FormSelect from '../form/FormSelect';
 import FormTextArea from '../form/input/FormTextArea';
 import { createActivitySchema } from '@/utils/validations';
-import { NewActivity } from '@/utils/constants';
-import Popup from '../dialog/Popup';
+import { ActivityStatus, ActivityType, eCRUDStatus, NewActivity } from '@/utils/constants';
 import { Modal } from '../ui/modal';
+import React, { FC } from 'react';
+import { useAppSelector } from '@/hooks/useAppSelector';
+import { addActivityApiCall, updateActivityApiCall } from './Action';
+import { useDispatch } from 'react-redux';
+import Radio from '../form/input/Radio';
 
-const initialValues = { leadID: "", type: "", status: "", title: "", description: "" };
+interface ActivityFormProps {
+    isOpen: boolean;
+    onClose: () => void;
+    leadsDs: any[];
+    activityData?: any;
+    lead?: any;
+    setStatusActivity?: any;
+}
 
-const ActivityFormPopup = ({
-    isOpen,
-    onClose,
-}: { isOpen: boolean, onClose: () => void }) => {
+const ActivityFormPopup: FC<ActivityFormProps> = ({ isOpen, onClose, leadsDs, activityData, lead, setStatusActivity }) => {
+
+    const { data: { user } } = useAppSelector((state) => state.auth);
+    const dispatch = useDispatch();
+
+    const [leadsOptionDs, setLeadsOptionDs] = React.useState([]);
+
+    React.useEffect(() => {
+        if (leadsDs.length > 0) {
+            setLeadsOptionDs(() => leadsDs.map(lead => ({ value: lead.id, label: lead.fullName })));
+        }
+    }, [leadsDs]);
 
     const handleSubmit = async (
         values: NewActivity,
         { setSubmitting }: FormikHelpers<NewActivity>
     ) => {
+
         try {
-            console.log(values);
+            if (activityData?.id) {
+                updateActivityApiCall(values, setSubmitting, dispatch, () => {
+                    onClose();
+                });
+            } else {
+                addActivityApiCall(values, setSubmitting, dispatch, (activityData) => {
+                    setStatusActivity({ primaryKey: activityData.id, eStatus: eCRUDStatus.Inserted });
+                    onClose();
+                });
+            }
         } catch (error: any) {
             console.error(error);
         }
@@ -46,10 +68,18 @@ const ActivityFormPopup = ({
                     </div>
                     <Formik
                         validationSchema={createActivitySchema}
-                        initialValues={initialValues}
+                        initialValues={{
+                            leadID: lead ? lead.id : "",
+                            type: "",
+                            status: "",
+                            title: "",
+                            description: "",
+                            userID: user.id,
+
+                        }}
                         onSubmit={handleSubmit}
                     >
-                        {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+                        {({ values, errors, touched, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
                             <FormikForm>
                                 <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
                                     <div className="space-y-6">
@@ -58,7 +88,7 @@ const ActivityFormPopup = ({
                                                 Lead <span className="text-error-500">*</span>
                                             </Label>
                                             <FormSelect
-                                                options={[{ value: 1, label: "Alit Technologies" }]}
+                                                options={leadsOptionDs}
                                                 placeholder="Select Lead"
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
@@ -73,7 +103,7 @@ const ActivityFormPopup = ({
                                                 Activity Type <span className="text-error-500">*</span>
                                             </Label>
                                             <FormSelect
-                                                options={[{ value: 1, label: "Alit Technologies" }]}
+                                                options={ActivityType}
                                                 placeholder="Select Type"
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
@@ -87,8 +117,28 @@ const ActivityFormPopup = ({
                                             <Label>
                                                 Status <span className="text-error-500">*</span>
                                             </Label>
-                                            <FormSelect
-                                                options={[{ value: 1, label: "Alit Technologies" }]}
+                                            <div className='flex'>
+                                                <Radio
+                                                    id="SCHEDULED"
+                                                    name="status"
+                                                    value="SCHEDULED"
+                                                    checked={values.status === "SCHEDULED"}
+                                                    onChange={(selected) => setFieldValue("status", selected)}
+                                                    label="Scheduled"
+                                                />
+                                                <Radio
+                                                    id="COMPLETED"
+                                                    name="status"
+                                                    value="COMPLETED"
+                                                    checked={values.status === "COMPLETED"}
+                                                    onChange={(selected) => setFieldValue("status", selected)}
+                                                    label="Complete"
+                                                    className='ms-4'
+                                                />
+                                            </div>
+                                            <ErrorMessage className="text-xs text-error-500" component='p' name={"status"} />
+                                            {/* <FormSelect
+                                                options={ActivityStatus}
                                                 placeholder="Select Status"
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
@@ -96,7 +146,7 @@ const ActivityFormPopup = ({
                                                 name="status"
                                                 value={values.status}
                                                 error={errors.status && touched.status ? true : false}
-                                            />
+                                            /> */}
                                         </div>
                                         <div>
                                             <Label>

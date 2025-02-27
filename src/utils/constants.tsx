@@ -151,6 +151,17 @@ export const IndustryType: Option[] = [
     { label: "Education", value: "EDUCATION" },
 ]
 
+export const ActivityType = [
+    { label: "Call", value: "CALL" },
+    { label: "Meeting", value: "MEETING" },
+    { label: "Email", value: "EMAIL" },
+]
+
+export const ActivityStatus = [
+    { label: "Complete", value: "COMPLETED" },
+    { label: "Scheduled", value: "SCHEDULED" },
+]
+
 export const eCRUDStatus = {
     None: 0,
     Inserted: 1,
