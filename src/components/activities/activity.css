@@ -1,0 +1,13 @@
+.MuiPopper-root.MuiPickersPopper-root {
+    z-index: 200000
+}
+
+.datepicker {
+    .MuiInputBase-root {
+        border-radius: 0.5rem;
+        input {
+            height: 11px;
+            font-size: 0.875rem;
+        }
+    }
+}

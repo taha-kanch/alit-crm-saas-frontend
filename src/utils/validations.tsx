@@ -47,9 +47,18 @@ export const createActivitySchema = Yup.object().shape({
         .required("Activity type is required"),
     status: Yup.string()
         .required("Status is required"),
+    scheduleDate: Yup
+        .date()
+        .nullable()
+        .when("status", {
+            is: "SCHEDULED",
+            then: (schema) => schema.required("Scheduled Date is required"),
+            otherwise: (schema) => schema.notRequired(),
+        }),
     title: Yup.string()
         .required("Title is required"),
 });
+
 
 export const leadSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -75,6 +84,8 @@ export const leadSchema = Yup.object().shape({
         .required("Postal Code is required"),
     status: Yup.string()
         .required("Status is required"),
+    dealValue: Yup.number()
+        .required("Deal Value is required"),
     companyName: Yup.string()
         .required("Company Name is required"),
     numberOfEmployees: Yup.number()

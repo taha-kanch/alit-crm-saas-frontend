@@ -81,6 +81,7 @@ export interface NewActivity {
     status: string,
     title: string,
     description: string
+    scheduleDate?: Date | null;
 }
 
 export interface NewLead {
@@ -155,11 +156,6 @@ export const ActivityType = [
     { label: "Call", value: "CALL" },
     { label: "Meeting", value: "MEETING" },
     { label: "Email", value: "EMAIL" },
-]
-
-export const ActivityStatus = [
-    { label: "Complete", value: "COMPLETED" },
-    { label: "Scheduled", value: "SCHEDULED" },
 ]
 
 export const eCRUDStatus = {

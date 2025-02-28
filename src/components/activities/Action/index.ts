@@ -77,7 +77,7 @@ export const addActivityApiCall = async (values: any, setSubmitting: FormikHelpe
     }
 }
 
-export const updateActivityApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: () => void) => {
+export const updateActivityApiCall = async (values: any, setSubmitting: FormikHelpers<{}>['setSubmitting'], dispatch: AppDispatch, cb: (arg: any) => void) => {
     dispatch(
         loaderListener({
             loading: true,
@@ -98,11 +98,27 @@ export const updateActivityApiCall = async (values: any, setSubmitting: FormikHe
                     loading: false,
                 })
             );
-            cb();
+            cb(response.data);
         }
     } catch (error) {
         Utils.showAlert(2, "Something went wrong");
     } finally {
         setSubmitting(false);
+    }
+}
+
+export const updateActivityStatusApiCall = async (values: any, cb: (arg: any) => void) => {
+    const dataToSend = {
+        ...values
+    }
+    try {
+        const response = await activityService.updateActivityByID(values.id, dataToSend);
+        if (!response.isOk) {
+            Utils.showAlert(2, response.data?.message || "Unable to update Activity");
+        } else {
+            cb(response.data);
+        }
+    } catch (error) {
+        Utils.showAlert(2, "Something went wrong");
     }
 }

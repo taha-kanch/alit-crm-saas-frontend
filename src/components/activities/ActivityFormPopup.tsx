@@ -6,13 +6,18 @@ import FormInput from '../form/input/FormInput';
 import FormSelect from '../form/FormSelect';
 import FormTextArea from '../form/input/FormTextArea';
 import { createActivitySchema } from '@/utils/validations';
-import { ActivityStatus, ActivityType, eCRUDStatus, NewActivity } from '@/utils/constants';
+import { ActivityType, eCRUDStatus, NewActivity } from '@/utils/constants';
 import { Modal } from '../ui/modal';
 import React, { FC } from 'react';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { addActivityApiCall, updateActivityApiCall } from './Action';
 import { useDispatch } from 'react-redux';
 import Radio from '../form/input/Radio';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import './activity.css'
 
 interface ActivityFormProps {
     isOpen: boolean;
@@ -40,8 +45,12 @@ const ActivityFormPopup: FC<ActivityFormProps> = ({ isOpen, onClose, leadsDs, ac
         values: NewActivity,
         { setSubmitting }: FormikHelpers<NewActivity>
     ) => {
-
         try {
+
+            if(values.scheduleDate) {
+                values.scheduleDate = new Date(values.scheduleDate)
+            }
+
             if (activityData?.id) {
                 updateActivityApiCall(values, setSubmitting, dispatch, () => {
                     onClose();
@@ -72,6 +81,7 @@ const ActivityFormPopup: FC<ActivityFormProps> = ({ isOpen, onClose, leadsDs, ac
                             leadID: lead ? lead.id : "",
                             type: "",
                             status: "",
+                            scheduleDate: null,
                             title: "",
                             description: "",
                             userID: user.id,
@@ -124,7 +134,7 @@ const ActivityFormPopup: FC<ActivityFormProps> = ({ isOpen, onClose, leadsDs, ac
                                                     value="SCHEDULED"
                                                     checked={values.status === "SCHEDULED"}
                                                     onChange={(selected) => setFieldValue("status", selected)}
-                                                    label="Scheduled"
+                                                    label="Schedule"
                                                 />
                                                 <Radio
                                                     id="COMPLETED"
@@ -132,22 +142,34 @@ const ActivityFormPopup: FC<ActivityFormProps> = ({ isOpen, onClose, leadsDs, ac
                                                     value="COMPLETED"
                                                     checked={values.status === "COMPLETED"}
                                                     onChange={(selected) => setFieldValue("status", selected)}
-                                                    label="Complete"
+                                                    label="Completed"
                                                     className='ms-4'
                                                 />
                                             </div>
                                             <ErrorMessage className="text-xs text-error-500" component='p' name={"status"} />
-                                            {/* <FormSelect
-                                                options={ActivityStatus}
-                                                placeholder="Select Status"
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                className="dark:bg-dark-900"
-                                                name="status"
-                                                value={values.status}
-                                                error={errors.status && touched.status ? true : false}
-                                            /> */}
                                         </div>
+                                        {
+                                            values.status === "SCHEDULED" && (
+                                                <>
+                                                    <div>
+                                                        <Label htmlFor="datePicker">Schedule Date <span className="text-error-500">*</span></Label>
+                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                            <DemoContainer components={['DateTimePicker']}>
+                                                                <DateTimePicker
+                                                                    className='datepicker'
+                                                                    onChange={(newValue) => {
+                                                                        console.log(newValue)
+                                                                        setFieldValue("scheduleDate", newValue)
+                                                                    }}
+                                                                    name='scheduleDate'
+                                                                />
+                                                            </DemoContainer>
+                                                        </LocalizationProvider>
+                                                    </div>
+                                                    <ErrorMessage className="text-xs text-error-500" component='p' name={"scheduleDate"} />
+                                                </>
+                                            )
+                                        }
                                         <div>
                                             <Label>
                                                 Title <span className="text-error-500">*</span>

@@ -73,9 +73,10 @@ const LeadFormPopup: FC<LeadFormProps> = ({ isOpen, onClose, leadData, setStatus
                             jobTitle: leadData.jobTitle || "",
                             email: leadData.email || "",
                             phoneNumber: leadData.phoneNumber || "",
-                            gender: leadData.gender || "",
+                            gender: leadData.gender || null,
                             address: leadData.address || "",
                             status: leadData.status || "",
+                            dealValue: leadData.dealValue || "",
                             companyName: leadData.companyName || "",
                             website: leadData.website || "",
                             annualRevenue: leadData.annualRevenue || undefined,
@@ -283,6 +284,16 @@ const LeadFormPopup: FC<LeadFormProps> = ({ isOpen, onClose, leadData, setStatus
                                                     name="leadOwner"
                                                     value={values.leadOwner}
                                                     error={errors.leadOwner && touched.leadOwner ? true : false}
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label>Lead Value <span className="text-error-500">*</span></Label>
+                                                <FormInput
+                                                    type="Number"
+                                                    id="dealValue"
+                                                    name="dealValue"
+                                                    placeholder="Enter Lead Value"
+                                                    error={errors.dealValue && touched.dealValue ? true : false}
                                                 />
                                             </div>
                                         </div>

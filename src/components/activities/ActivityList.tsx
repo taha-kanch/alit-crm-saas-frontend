@@ -6,9 +6,9 @@ import ActivityFormPopup from './ActivityFormPopup';
 import { useModal } from '@/hooks/useModal';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { useDispatch } from 'react-redux';
-import { fetchAllActivityApiCall } from './Action';
+import { fetchAllActivityApiCall, updateActivityStatusApiCall } from './Action';
 import { fetchAllLeadApiCall } from '../lead/Action';
-import { eCRUDStatus } from '@/utils/constants';
+import { eCRUDStatus, NewActivity } from '@/utils/constants';
 
 const ActivityList = () => {
 
@@ -35,6 +35,12 @@ const ActivityList = () => {
         fetchAllLeadApiCall(dispatch);
     }, []);
 
+    const handleUpdateActivityStatus = async (values: NewActivity) => {
+        updateActivityStatusApiCall({...values, status: "COMPLETED"}, (activityData) => {
+            setStatusActivity({ primaryKey: activityData.id, eStatus: eCRUDStatus.Updated });
+        });
+    }
+
     const columns: GridColDef[] = [
         {
             field: 'lead',
@@ -42,10 +48,10 @@ const ActivityList = () => {
             flex: 1,
             renderCell: (params) => (
                 <div className='mt-2'>
-                    <span className="block text-black-800 text-theme-sm dark:text-white/90">
+                    <span className="block text-black-500 text-theme-sm dark:text-gray-400">
                         {params.value.fullName}
                     </span>
-                    <span className="block text-gray-600 text-theme-xs dark:text-gray-400">
+                    <span className="block text-gray-500 text-theme-sm dark:text-gray-400">
                         {params.value.jobTitle}
                     </span>
                 </div>
@@ -61,26 +67,16 @@ const ActivityList = () => {
                 </span>
             ),
         },
-        // {
-        //     field: 'fromDate',
-        //     headerName: 'From',
-        //     flex: 1.2,
-        //     renderCell: (params) => (
-        //         <span className="text-black-500 text-theme-sm dark:text-gray-400">
-        //             {params.value}
-        //         </span>
-        //     ),
-        // },
-        // {
-        //     field: 'toDate',
-        //     headerName: 'To',
-        //     flex: 1.2,
-        //     renderCell: (params) => (
-        //         <span className="text-black-500 text-theme-sm dark:text-gray-400">
-        //             {params.value}
-        //         </span>
-        //     ),
-        // },
+        {
+            field: 'scheduleDate',
+            headerName: 'Schedule Date',
+            flex: 1.2,
+            renderCell: (params) => (
+                <span className="text-black-500 text-theme-sm dark:text-gray-400">
+                    {params.value ? new Date(params.value).toLocaleString() : ""}
+                </span>
+            ),
+        },
         {
             field: 'title',
             headerName: 'Title',
@@ -91,34 +87,24 @@ const ActivityList = () => {
                 </span>
             ),
         },
-        // {
-        //     field: 'reminder',
-        //     headerName: 'Reminder',
-        //     flex: 0.8,
-        //     renderCell: (params) => (
-        //         <div className='mt-5'>
-        //             {
-        //                 params.value === "true" ? (
-        //                     <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-        //                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        //                     </svg>
-        //                 ) : (
-        //                     <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-        //                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-        //                     </svg>
-        //                 )
-        //             }
-        //         </div>
-        //     ),
-        // },
         {
             field: 'status',
             headerName: 'Status',
             flex: 1,
             renderCell: (params) => (
-                <span className="text-black-500 text-theme-sm dark:text-gray-400">
-                    {params.value}
-                </span>
+                <>
+                    <Button
+                        size="sm" variant="outline"
+                        type='button' disabled={params.value == "COMPLETED"}
+                        className='border border-blue-500 text-blue-500'
+                        onClick={() => handleUpdateActivityStatus(params.row)}
+                    >
+                        Complete
+                    </Button>
+                </>
+                // <span className="text-black-500 text-theme-sm dark:text-gray-400">
+                //     {params.value}
+                // </span>
             ),
         },
     ];
