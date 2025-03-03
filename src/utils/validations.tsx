@@ -137,3 +137,8 @@ export const userAddressScheme = Yup.object().shape({
     postalCode: Yup.number()
         .required("Postāl Code is required"),
 });
+
+export const targetSchema = Yup.object().shape({
+    targetValue: Yup.number()
+        .required("Target Value is required"),
+});

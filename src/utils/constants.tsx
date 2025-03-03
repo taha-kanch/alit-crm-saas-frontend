@@ -107,6 +107,11 @@ export interface NewLead {
     leadOwner: number;
 }
 
+export interface Target {
+    month?: number;
+    year?: number;
+    targetValue: number;
+}
 export interface UpdateLeadStatus {
     status: string;
 }

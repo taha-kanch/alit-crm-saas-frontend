@@ -12,6 +12,11 @@ import activitySlice from '@/components/activities/Slice/ActivitySlice';
 import activityDetailSlice from '@/components/activities/Slice/ActivityDetailSlice';
 import subscriptionSlice from '@/components/subscription/Slice/SubscriptionSlice';
 import subscribeUserSlice from '@/components/subscription/Slice/SubscribeUserSlice';
+import leadAnalyticsSlice from '@/components/dashboard/Slice/LeadAnalyticsSlice';
+import leadValueSummarySlice from '@/components/dashboard/Slice/LeadValueSummarySlice';
+import scheduledActivitySlice from '@/components/dashboard/Slice/ScheduledActivitySlice';
+import summarySlice from '@/components/dashboard/Slice/SummarySlice';
+import targetDetailSlice from '@/components/target/Slice/TargetDetailSlice';
 
 const persistConfig = {
     debug: false,
@@ -32,6 +37,11 @@ const rootReducer = combineReducers({
 "activityDetail": activityDetailSlice,
 "subscriptions": subscriptionSlice,
 "subscribeUser": subscribeUserSlice,
+"leadAnalytics": leadAnalyticsSlice,
+"leadValueSummary": leadValueSummarySlice,
+"scheduledActivity": scheduledActivitySlice,
+"summary": summarySlice,
+"targetDetail": targetDetailSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
