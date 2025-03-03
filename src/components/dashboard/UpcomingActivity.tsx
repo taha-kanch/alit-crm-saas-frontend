@@ -173,7 +173,7 @@ const UpcomingActivity: React.FC<UpcomingActivityProps> = ({ activities }) => {
           </button>
         </div> */}
       </div>
-      <div className="max-w-full overflow-x-auto max-h-[500px]">
+      <div className="max-w-full overflow-x-auto max-h-[430px]">
         <Table>
           {/* Table Header */}
           <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
